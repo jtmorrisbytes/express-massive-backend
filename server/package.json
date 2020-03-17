@@ -12,7 +12,10 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.16.1"
+  },
   "bugs": {
     "url": "https://github.com/jtmorrisbytes/react-express/issues"
   },
