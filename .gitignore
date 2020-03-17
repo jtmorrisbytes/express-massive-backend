@@ -1,0 +1,14 @@
+node_modules/
+
+.DS_Store
+.env
+
+
+# certificate files
+.cert
+.key
+.pub
+.crt
+
+# secret files
+*secret*
