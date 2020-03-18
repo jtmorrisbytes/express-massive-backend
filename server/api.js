@@ -1,18 +1,39 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
-const server = express();
+const api = express();
+const swagger = require("swagger-generator-express");
+let { version, name, description } = require("./package.json");
+
 let HOST = process.env.HOST;
-let PORT = +process.env.PORT;
+let PORT = process.env.APIPORT;
+const basePath = "/api";
+
 if (process.NODE_ENV === "production") {
   PORT = PORT || 80;
   HOST = HOST || "0.0.0.0";
-  server.use(morgan("dev"));
+  api.use(morgan("dev"));
 } else {
-  PORT = PORT || 3001;
+  PORT = PORT || Math.random() * (8000 - 3000) + 3000;
   HOST = HOST || "127.0.0.1";
-  server.use(morgan("tiny"));
+  api.use(morgan("tiny"));
 }
 
-server.listen(HOST, PORT, () => {
+const swaggerSchema = {
+  title: name,
+  version: version,
+  basePath: basePath,
+  host: `${HOST}:${PORT + 1}`,
+  schemes: ["http"]
+};
+
+swagger.serveSwagger(api, "/swagger", swaggerSchema, {
+  routePath: "./src/routes",
+  requestModelPath: "./src/requestModels",
+  responseModelPath: "./src/responseModels"
+});
+
+console.log(`${HOST}:${PORT}`);
+api.listen(HOST, PORT, () => {
   console.log(`API LISTENING on ${HOST}:${PORT}`);
 });
