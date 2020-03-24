@@ -1,6 +1,16 @@
+const joi = require("@hapi/joi");
+const model = {
+  id: joi
+    .number()
+    .integer()
+    .positive()
+    .min(0)
+    .required()
+};
+
 module.exports = {
-  0: {
-    model: "getProducts",
-    group: "Products"
-  }
+  GET: {},
+  POST: {},
+  PUT: {},
+  DELETE: {}
 };

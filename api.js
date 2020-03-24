@@ -1,4 +1,4 @@
-let config = require("./loadConfig")();
+let config = require("./scripts/loadConfig")();
 
 const express = require("express");
 const morgan = require("morgan");
