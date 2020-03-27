@@ -1,4 +1,4 @@
-let config = require("./scripts/loadConfig")();
+let config = require("./lib/src/loadConfig")();
 const express = require("express");
 const path = require("path");
 const morgan = require("morgan");
@@ -16,22 +16,22 @@ if (process.NODE_ENV === "production") {
   PORT = PORT || 3001;
   app.use(morgan("tiny"));
 }
-// if serving react, uncomment the lines below.
-/*
-if (process.NODE_ENV === "production") {
-  PORT = PORT || 80;
-    app.use(express.static(path.join("..", "client", "build")));
-} else {
-  PORT = PORT || 3001;
-    app.use(express.static(path.join("..", "client", "build")));
 
-
-*/
-
-const api = require("./api.js");
+const routeDir = path.join(config.CWD, config.routesDir);
+console.debug(`grabbing route module from  ${routeDir}`);
+const routes = require(routeDir);
+console.log("routes", routes);
 // use the api server
-console.log(api);
-app.use(api.basePath, api.router);
+// mount all the routes in the routes module programmatically
+// console.log(`Mounting routes at ${routeDir}`);
+// for (routeName in routes) {
+//   let route = routes[routeName];
+//   console.info(
+//     "mounting route:'" + routeName + "'",
+//     `at path ${config.apiBasePath + route.basePath}`
+//   );
+//   app.use(config.apiBasePath + route.basePath, route.router);
+// }
 
 app.listen(PORT, HOST, () => {
   console.log(`SERVER LISTENING on ${HOST}:${PORT}`);

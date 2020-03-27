@@ -10,6 +10,7 @@
     "testControllers": "jasmine src/controllers/**/*.spec.js",
     "testRoutes": "",
     "testDB": "",
+    "buildSwaggerFromJSDoc": "npx swagger-jsdoc -d ./src/swaggerDef.js src/routes/*.js lib/**/*.js",
     "testCI": "",
     "dev": "npx cross-env NODE_ENV=development DEBUG=true nodemon"
   },
@@ -29,6 +30,7 @@
   "homepage": "https://github.com/jtmorrisbytes/react-express#readme",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "autodiscover-modules": "^1.1.2",
     "body-parser": "^1.19.0",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
@@ -40,6 +42,7 @@
   "private": true,
   "devDependencies": {
     "jasmine-node": "^3.0.0",
-    "mocha": "^7.1.0"
+    "mocha": "^7.1.0",
+    "swagger-jsdoc": "^4.0.0"
   }
 }
