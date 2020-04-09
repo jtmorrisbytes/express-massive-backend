@@ -4,17 +4,22 @@ const fs = require("fs");
 const path = require("path");
 const rootPath = process.env.API_ROOT || "/api";
 const routes = Router();
-const path = require("path");
-const fs = require("fs");
 
+// use this code to dynamically load routers
 fs.readdirSync(__dirname).forEach((entry) => {
   if (fs.statSync(path.join(__dirname, entry)).isDirectory()) {
     let module = require(`./${entry}`);
-    // console.log(module);
-    routes.use(module.basePath, router);
+    console.debug(
+      `Routes module loading router submodule at '${path.join(
+        __dirname,
+        entry
+      )}' with path ${module.basePath}\n`,
+      module.router
+    );
+    routes.use(module.basePath, module.router);
   }
 });
-exports = {
+module.exports = {
   rootPath,
   router: routes,
 };
