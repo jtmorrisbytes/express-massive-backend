@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const resolvePrototypeForBuiltins = require("./resolvePrototypeForBuiltins");
 function validateRootType(object, path) {
   if (!object.name) {
     throw new Error(
@@ -22,11 +23,34 @@ function validateRootType(object, path) {
     return true;
   }
 }
-function resolveConstructorForType(schema) {
+function resolveConstructorForBuiltinType(schema) {
   let constructorName = schema.name[0].toUpperCase() + schema.name.slice(1);
-  console.log(constructorName);
-  console.log(`attempting to grab primitive type for ${constructorName}`);
-  schema.constructor = global[constructorName] || null;
+  console.log(
+    `attempting to grab Constructor function for ${constructorName} from library`
+  );
+  try {
+    schema.constructor = require(path.join(
+      "lib",
+      "types",
+      "builtins",
+      constructorName
+    ));
+    schema.prototype = constructor.prototype;
+  } catch (e) {
+    if (e.code == "MODULE_NOT_FOUND") {
+      console.log(
+        "did not find constructor function in library for builtin " +
+          constructorName +
+          ",loading from global scope"
+      );
+      schema.constructor = global[constructorName] || null;
+      if (schema.constructor) {
+        schema.prototype = schema.constructor.prototype;
+      } else {
+        schema.prototype = {};
+      }
+    }
+  }
   return schema;
 }
 function requireRootTypes(directory) {
@@ -42,10 +66,12 @@ function requireRootTypes(directory) {
   schemas.forEach((schemaPath) => {
     let schemaAbsPath = path.join(directory, schemaPath);
     console.log(`requiring schema ${schemaPath}`);
-    const schema = require(schemaAbsPath);
+    let schema = require(schemaAbsPath);
     console.log("validating schema");
     if (validateRootType(schema, schemaPath)) {
-      rootTypes[schema.name] = resolveConstructorForType(schema);
+      schema = resolveConstructorForBuiltinType(schema);
+      schema = resolvePrototypeForBuiltins(schema);
+      rootTypes[schema.name] = schema;
     }
   });
   return rootTypes;
